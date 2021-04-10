@@ -16,9 +16,13 @@ spec:
         app: planner
     spec:
       restartPolicy: Always
+      securityContext:
+        runAsUser: 1000
       containers:
       - name: planner
-        image: oscarsotosanchez/planner:v1.0
+        image: franrobles8/planner:v2.0
+        securityContext:
+          allowPrivilegeEscalation: false
         env:
         - name: TOPO_HOST
           value: toposervice-service

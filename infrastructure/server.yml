@@ -16,9 +16,13 @@ spec:
         app: server
     spec:
       restartPolicy: Always
+      securityContext:
+        runAsUser: 1000
       containers:
       - name: server
-        image: oscarsotosanchez/server:v1.0
+        image: franrobles8/server:v2.0
+        securityContext:
+          allowPrivilegeEscalation: false
         command: ["bash"]
         args:
         - "-c"

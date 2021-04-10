@@ -18,7 +18,9 @@ spec:
       restartPolicy: Always
       containers:
       - name: toposervice
-        image: oscarsotosanchez/toposervice:v1.0
+        image: franrobles8/toposervice:v2.0
+        securityContext:
+          allowPrivilegeEscalation: false
         env:
         - name: SPRING_DATA_MONGODB_HOST
           value: mongodb-service

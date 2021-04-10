@@ -16,9 +16,13 @@ spec:
         app: weatherservice
     spec:
       restartPolicy: Always
+      securityContext:
+        runAsUser: 1000
       containers:
       - name: weatherservice
-        image: oscarsotosanchez/weatherservice:v1.0
+        image: franrobles8/weatherservice:v2.0
+        securityContext:
+          allowPrivilegeEscalation: false
         env:
         - name: GRPC_HOST
           valueFrom:
