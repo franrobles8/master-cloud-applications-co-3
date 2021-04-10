@@ -29,6 +29,13 @@ spec:
         - containerPort: 27017
         - containerPort: 27018
         - containerPort: 27019
+        volumeMounts:
+        - name: mongodb-persistent-storage
+          mountPath: /data/db
+      volumes:
+      - name: mongodb-persistent-storage
+        persistentVolumeClaim:
+          claimName: mongodb-pv-claim
 ---
 apiVersion: v1
 kind: Service
@@ -53,3 +60,33 @@ spec:
   selector:
     app: mongodb
   type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-pv-claim
+  labels:
+    app: mongodb
+spec:
+  storageClassName: mongo
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: mongodb-pv
+  labels:
+    type: local
+spec:
+  storageClassName: mongo
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/db/mongo"
+
