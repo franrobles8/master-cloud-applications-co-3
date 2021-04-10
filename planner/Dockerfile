@@ -23,6 +23,8 @@ RUN mvn package
 #################################################
 FROM openjdk:11-jre-slim
 
+
+USER maven
 # Define el directorio de trabajo donde se encuentra el JAR
 WORKDIR /usr/src/app/
 
