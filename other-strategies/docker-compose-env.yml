@@ -1,0 +1,75 @@
+version: '3.9'
+services:
+  server:
+    image: oscarsotosanchez/server:v1.0
+    ports:
+      - 3000:3000
+    env_file:
+        - properties.env
+    depends_on:
+      - mysql
+      - rabbitmq
+    command: bash -c "
+      ./wait-for-it.sh mysql:3306 --
+      ./wait-for-it.sh rabbitmq:5672 --
+      node src/server.js"
+    restart: on-failure
+
+  weatherservice:
+    image: oscarsotosanchez/weatherservice:v1.0
+    ports:
+      - 9090:9090
+    env_file:
+        - properties.env
+    restart: on-failure
+
+  planner:
+    image: oscarsotosanchez/planner:v1.0
+    env_file:
+        - properties.env
+    depends_on:
+      - weatherservice
+      - toposervice
+      - rabbitmq
+    restart: on-failure
+
+  toposervice:
+    image: oscarsotosanchez/toposervice:v1.0
+    ports:
+      - 8080:8080
+    env_file:
+        - properties.env
+    depends_on:
+      - mongodb
+    restart: on-failure
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    env_file:
+        - properties.env
+    volumes:
+      - ./mysql_db:/var/lib/mysql
+    restart: always
+
+  mongodb:
+    image: mongo:4.2.12-bionic
+    ports:
+      - 27017-27019:27017-27019
+    env_file:
+        - properties.env
+    volumes:
+      - ./mongo_db:/data/db
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    env_file:
+        - properties.env
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+    restart: always
