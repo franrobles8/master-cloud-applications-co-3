@@ -14,6 +14,8 @@ spec:
     metadata:
       labels:
         app: server
+        networking/allow-mysql-access: "true"
+        networking/allow-rabbitmq-access: "true"
     spec:
       restartPolicy: Always
       securityContext:
@@ -61,6 +63,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: server-ingress
+  labels:
+    app: server
 spec:
   rules:
     - http:

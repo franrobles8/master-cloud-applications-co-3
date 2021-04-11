@@ -14,6 +14,7 @@ spec:
     metadata:
       labels:
         app: planner
+        networking/allow-rabbitmq-access: "true"
     spec:
       restartPolicy: Always
       securityContext:
