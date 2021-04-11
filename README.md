@@ -1,29 +1,54 @@
-# EoloPlanner
+# Eoloplanner
 
-Este proyecto es una aplicación distribuida formada por diferentes servicios que se comunican entre sí usando API REST, gRPC y RabbitMQ. La aplicación ofrece un interfaz web que se comunica con el servidor con API REST y WebSockets. 
+## Use with minikube
 
-Algunos servicios están implementados con Node.js/Express y otros con Java/Spring. El despliegue y desarrollo están implementados utilizando la tecnología de Docker.
+Execute first minikube with a virtualbox driver using Cilium:
 
-Disponemos de un Docker Compose llamado `docker-compose.yml` para el despliegue que se encarga de levantar todos los servicios de la aplicación y los servicios auxiliares (MySQL, MongoDB y RabbitMQ). La información de las bases de datos MySQL y MongoDB se persiste en las carpetas `mongo_db` y `mysql_db`. Y la persistencia de la cola RabbitMQ en `rabbitmq`.
-
-Todos los servicios disponen de una carpeta `.devcontainer` que nos permite desarrollar haciendo uso de la tecnología de Remote Containers de VSCode. Para levantar los servicios auxiliares (MySQL, MongoDB y RabbitMQ) se dispone de un Docker Compose llamado `docker-compose-dev.yml`. La información de las bases de datos MySQL y MongoDB se persiste en las carpetas  `mongo_db_dev` y `mysql_db_dev`. Y la persistencia de la cola RabbitMQ en `rabbitmq_dev`.
-
-Esta solución está basada en el trabajo entregado por el alumno Miguel García Sanguino.
-
-## Desarrollo con VSCode
-
-Primero tendremos que levantar los servicios auxiliares utilizando el siguiente comando:
-
-```bash
-docker-compose -f docker-compose-dev.yml up
+```sh
+minikube start --cni=cilium --memory=4096 --driver=virtualbox
 ```
 
-Después podremos ir al servicio que nos interese desarrollar y levantarlo haciendo uso de la tecnología Remote Containers de VSCode.
+In order to access the client webapp (it will be in the cluster ip, use `minikube ip` to get it), we need to enable the ingress addon first:
 
-## Desplegar
+```sh
+minikube addons enable ingress
+```
 
-Para desplegar la aplicación tendremos que utilizar el siguiente comando:
+Then, apply all the infrastructure resources and wait for them until everything is created (and services inside the containers running, check it with logs):
 
-```bash
-docker-compose up
+```sh
+kubectl apply -f ./infrastructure
+```
+
+If you don't to use the IP, you can add to the hosts files a name by doing:
+
+```sh
+echo "`minikube ip` clusterip" >> /etc/hosts
+```
+
+After that, you can access the webapp in [http://clusterip](http://clusterip) and check also that the REST API for the service **toposervice** is also working in [http://clusterip/toposervice](http://clusterip/toposervice). You can make a request to test it:
+
+```sh
+curl --location --request GET 'http://clusterip/toposervice/api/topographicdetails/madrid'
+```
+
+## Updated files to change user in containers:
+
+[planner] Added user **maven** to be used in `planner/Dockerfile`.
+[weatherservice] Default user is non-root (it is called **cnb**).
+[toposervice] Added user 1002 to be used in POM Plugin configuration:
+
+```xml
+<configuration>
+    <container>
+        <user>1002</user>
+    </container>
+</configuration>
+```
+
+[server] Added ownership of app folder to **node** user and use it:
+
+```
+RUN chown -R node:node /usr/src/app
+USER node
 ```
