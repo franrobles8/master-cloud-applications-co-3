@@ -16,6 +16,7 @@ spec:
         app: server
         networking/allow-mysql-access: "true"
         networking/allow-rabbitmq-access: "true"
+        networking/allow-internet-access-to-server: "true"
     spec:
       restartPolicy: Always
       securityContext:

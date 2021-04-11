@@ -74,19 +74,3 @@ spec:
   resources:
     requests:
       storage: 3Gi
----
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: mongodb-pv
-  labels:
-    type: local
-spec:
-  storageClassName: mongo
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/db/mongo"
-

@@ -15,6 +15,7 @@ spec:
       labels:
         app: toposervice
         networking/allow-mongodb-access: "true"
+        networking/allow-internet-access-to-toposervice: "true"
     spec:
       restartPolicy: Always
       containers:
