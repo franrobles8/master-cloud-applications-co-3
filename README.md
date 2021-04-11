@@ -1,6 +1,6 @@
 # Eoloplanner
 
-## Use with minikube
+## Use with minikube
 
 Execute first minikube with a virtualbox driver using Cilium:
 
@@ -32,7 +32,7 @@ After that, you can access the webapp in [http://clusterip](http://clusterip) an
 curl --location --request GET 'http://clusterip/toposervice/api/topographicdetails/madrid'
 ```
 
-## Updated files to change user in containers:
+## Updated files to change user in containers:
 
 [planner] Added user **maven** to be used in `planner/Dockerfile`.
 [weatherservice] Default user is non-root (it is called **cnb**).
